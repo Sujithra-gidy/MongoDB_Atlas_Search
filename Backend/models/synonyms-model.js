@@ -4,7 +4,7 @@ const synonym = new mongoose.Schema({
     mappingType: {
         type: String,
         enum: ["equivalent", "explicit"],
-        reuire: true
+        required: true
     },
     input: {
         type: [String],

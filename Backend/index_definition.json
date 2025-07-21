@@ -2,13 +2,39 @@
   "mappings": {
     "dynamic": false,
     "fields": {
-      "bio": {
+      "job": [
+        {
+          "analyzer": "lucene.standard",
+          "searchAnalyzer": "lucene.standard",
+          "type": "string"
+        },
+        {
+          "type": "autocomplete"
+        }
+      ],
+      "skills": [
+        {
+          "analyzer": "lucene.standard",
+          "searchAnalyzer": "lucene.standard",
+          "type": "string"
+        },
+        {
+          "type": "autocomplete"
+        }
+      ],
+      "first_name": {
         "type": "autocomplete"
       },
-      "college_name": {
+      "last_name": {
+        "type": "autocomplete"
+      },
+      "location": {
         "type": "autocomplete"
       },
       "company_name": {
+        "type": "autocomplete"
+      },
+      "college_name": {
         "type": "autocomplete"
       },
       "education": {
@@ -17,13 +43,12 @@
             "type": "autocomplete"
           },
           "course": {
-            "type": "autocomplete"
+            "type": "string",
+            "analyzer": "lucene.standard"
           },
           "degree": {
-            "type": "autocomplete"
-          },
-          "location": {
-            "type": "autocomplete"
+            "type": "string",
+            "analyzer": "lucene.standard"
           }
         },
         "type": "document"
@@ -36,49 +61,17 @@
           "company_name": {
             "type": "autocomplete"
           },
-          "location": {
-            "type": "autocomplete"
-          },
           "role": {
-            "type": "autocomplete"
+            "type": "string",
+            "analyzer": "lucene.standard"
           }
         },
         "type": "document"
       },
-      "first_name": {
-        "type": "autocomplete"
-      },
-      "job": [
-        {
-          "analyzer": "lucene.standard",
-          "searchAnalyzer": "lucene.standard",
-          "type": "string"
-        },
-        {
-          "type": "autocomplete"
-        }
-      ],
-      "last_name": {
-        "type": "autocomplete"
-      },
-      "location": {
-        "type": "autocomplete"
-      },
-      "skills": [
-        {
-          "analyzer": "lucene.standard",
-          "searchAnalyzer": "lucene.standard",
-          "type": "string"
-        },
-        {
-          "type": "autocomplete"
-        }
-      ],
       "user_certificates": {
         "fields": {
           "certificate_name": {
             "analyzer": "lucene.standard",
-            "searchAnalyzer": "lucene.standard",
             "type": "string"
           },
           "certification_provider": {
