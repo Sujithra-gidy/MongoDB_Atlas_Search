@@ -1,0 +1,101 @@
+{
+  "mappings": {
+    "dynamic": false,
+    "fields": {
+      "bio": {
+        "type": "autocomplete"
+      },
+      "college_name": {
+        "type": "autocomplete"
+      },
+      "company_name": {
+        "type": "autocomplete"
+      },
+      "education": {
+        "fields": {
+          "college_name": {
+            "type": "autocomplete"
+          },
+          "course": {
+            "type": "autocomplete"
+          },
+          "degree": {
+            "type": "autocomplete"
+          },
+          "location": {
+            "type": "autocomplete"
+          }
+        },
+        "type": "document"
+      },
+      "email_id": {
+        "type": "autocomplete"
+      },
+      "experience": {
+        "fields": {
+          "company_name": {
+            "type": "autocomplete"
+          },
+          "location": {
+            "type": "autocomplete"
+          },
+          "role": {
+            "type": "autocomplete"
+          }
+        },
+        "type": "document"
+      },
+      "first_name": {
+        "type": "autocomplete"
+      },
+      "job": [
+        {
+          "analyzer": "lucene.standard",
+          "searchAnalyzer": "lucene.standard",
+          "type": "string"
+        },
+        {
+          "type": "autocomplete"
+        }
+      ],
+      "last_name": {
+        "type": "autocomplete"
+      },
+      "location": {
+        "type": "autocomplete"
+      },
+      "skills": [
+        {
+          "analyzer": "lucene.standard",
+          "searchAnalyzer": "lucene.standard",
+          "type": "string"
+        },
+        {
+          "type": "autocomplete"
+        }
+      ],
+      "user_certificates": {
+        "fields": {
+          "certificate_name": {
+            "analyzer": "lucene.standard",
+            "searchAnalyzer": "lucene.standard",
+            "type": "string"
+          },
+          "certification_provider": {
+            "type": "autocomplete"
+          }
+        },
+        "type": "document"
+      }
+    }
+  },
+  "synonyms": [
+    {
+      "analyzer": "lucene.standard",
+      "name": "profileSynonyms",
+      "source": {
+        "collection": "synonyms"
+      }
+    }
+  ]
+}
