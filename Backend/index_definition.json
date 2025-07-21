@@ -29,7 +29,9 @@
         "type": "autocomplete"
       },
       "location": {
-        "type": "autocomplete"
+        "analyzer": "lucene.standard",
+        "searchAnalyzer": "lucene.standard",
+        "type": "string"
       },
       "company_name": {
         "type": "autocomplete"
