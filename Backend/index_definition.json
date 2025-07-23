@@ -2,7 +2,7 @@
   "mappings": {
     "dynamic": false,
     "fields": {
-      "job": [
+      "job" : [
         {
           "analyzer": "lucene.standard",
           "searchAnalyzer": "lucene.standard",
@@ -36,28 +36,6 @@
       "company_name": {
         "type": "autocomplete"
       },
-      "college_name": {
-        "type": "autocomplete"
-      },
-      "education": {
-        "fields": {
-          "college_name": {
-            "type": "autocomplete"
-          },
-          "course": {
-            "type": "string",
-            "analyzer": "lucene.standard"
-          },
-          "degree": {
-            "type": "string",
-            "analyzer": "lucene.standard"
-          }
-        },
-        "type": "document"
-      },
-      "email_id": {
-        "type": "autocomplete"
-      },
       "experience": {
         "fields": {
           "company_name": {
@@ -66,18 +44,6 @@
           "role": {
             "type": "string",
             "analyzer": "lucene.standard"
-          }
-        },
-        "type": "document"
-      },
-      "user_certificates": {
-        "fields": {
-          "certificate_name": {
-            "analyzer": "lucene.standard",
-            "type": "string"
-          },
-          "certification_provider": {
-            "type": "autocomplete"
           }
         },
         "type": "document"
