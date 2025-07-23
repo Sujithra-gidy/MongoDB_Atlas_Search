@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import CircularProgress from '@mui/material/CircularProgress';
+import { toast, Toaster } from 'react-hot-toast';
 import axios from 'axios';
 import '../App.css';
 
@@ -24,7 +25,9 @@ const Search = () => {
             setPage(newPage);
             setTotalPages(totalPages);
         } catch (error) {
-            console.error("Search error:", error);
+            const message = error?.response?.data?.message || "Search failed. Please try again.";
+            console.error("Search error: ❌", error);
+            toast.error(message);
         }
         setLoading(false);
     };
@@ -78,8 +81,8 @@ const Search = () => {
                     onKeyDown={(e) => e.key === "Enter" && handleSearch(1)}
                 />
 
-                <button className="search-button" onClick={() => handleSearch(1)}>Search</button>
-                <button className="search-button" onClick={(e) => handleClear(e)}>Clear</button>
+                <button className="search-button" onClick={() => handleSearch(1)} disabled={query === ""}>Search</button>
+                <button className="search-button" onClick={(e) => handleClear(e)} disabled={query === ""}>Clear</button>
 
             </div>
 
@@ -126,8 +129,9 @@ const Search = () => {
                 </button>
 
             </div>
-
+            <Toaster />
         </div>
+
     );
 };
 
