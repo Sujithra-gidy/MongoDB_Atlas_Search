@@ -71,6 +71,28 @@ const Search = () => {
         if (page > 1) handleSearch(page - 1);
     };
 
+    const renderHighlightedText = (profile, fieldPath) => {
+        const highlight = profile.highlights?.find(h => h.path === fieldPath);
+        if (!highlight) {
+            // fallback to raw value
+            if (fieldPath === "skills") return profile.skills?.join(", ");
+            if (fieldPath === "job") return profile.job;
+            if (fieldPath === "first_name") return profile.first_name;
+            if (fieldPath === "last_name") return profile.last_name;
+            if (fieldPath === "location") return profile.location;
+            return "";
+        }
+
+        return highlight.texts.map((text, i) =>
+            text.type === "hit" ? (
+                <mark key={i}>{text.value}</mark>
+            ) : (
+                <span key={i}>{text.value}</span>
+            )
+        );
+    };
+
+
     useEffect(() => {
         handleProfile(1);
     }, []);
@@ -114,10 +136,13 @@ const Search = () => {
                         <tbody>
                             {profiles.map((profile) => (
                                 <tr key={profile._id}>
-                                    <td>{profile.first_name} {profile.last_name}</td>
-                                    <td>{profile.job}</td>
-                                    <td>{profile.skills?.join(", ")}</td>
-                                    <td>{profile.location}</td>
+                                    <td>
+                                        {renderHighlightedText(profile, "first_name")}{" "}
+                                        {renderHighlightedText(profile, "last_name")}
+                                    </td>
+                                    <td>{renderHighlightedText(profile, "job")}</td>
+                                    <td>{renderHighlightedText(profile, "skills")}</td>
+                                    <td>{renderHighlightedText(profile, "location")}</td>
                                     <td>{profile.email_id}</td>
                                 </tr>
                             ))}

@@ -36,7 +36,7 @@ const search_profiles = async (req, res) => {
                         minimumShouldMatch: 1
                     },
                     highlight: {
-                        path: ["skills", "job", "experience.role", "first_name", "last_name"]
+                        path: ["skills", "job", "experience.role", "first_name", "last_name", "location"]
                     }
                 }
             },
@@ -64,7 +64,8 @@ const search_profiles = async (req, res) => {
                                 skills: 1,
                                 location: 1,
                                 experience: 1,
-                                score: 1
+                                score: 1,
+                                highlights: 1
                             }
                         }
                     ],
