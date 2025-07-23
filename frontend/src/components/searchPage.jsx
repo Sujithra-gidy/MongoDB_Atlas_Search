@@ -16,6 +16,14 @@ const Search = () => {
     // function to perform the search operation 
     const handleSearch = async (newPage = 1) => {
         if (!query.trim()) return;
+        const invalidData = /[$&<>{};'"\\]/;
+        const validData = /^[a-zA-Z0-9\s]+$/;
+
+        if (query && (invalidData.test(query) || !validData.test(query))) {
+            console.log(query);
+            toast.error("Invalid query");
+            return;
+        }
         setLoading(true);
         try {
             const res = await axios.get(`http://localhost:5000/api/search?q=${query}&page=${newPage}&limit=${limit}`);
