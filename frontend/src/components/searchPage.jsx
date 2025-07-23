@@ -71,11 +71,11 @@ const Search = () => {
         if (page > 1) handleSearch(page - 1);
     };
 
+    // function for highlighting the words
     const renderHighlightedText = (profile, fieldPath) => {
         const highlight = profile.highlights?.find(h => h.path === fieldPath);
         if (!highlight) {
             // fallback to raw value
-            if (fieldPath === "skills") return profile.skills?.join(", ");
             if (fieldPath === "job") return profile.job;
             if (fieldPath === "first_name") return profile.first_name;
             if (fieldPath === "last_name") return profile.last_name;
@@ -83,6 +83,7 @@ const Search = () => {
             return "";
         }
 
+        // if the word is to be highlighted then it will be sent inside a html mark tag. 
         return highlight.texts.map((text, i) =>
             text.type === "hit" ? (
                 <mark key={i}>{text.value}</mark>
@@ -91,6 +92,37 @@ const Search = () => {
             )
         );
     };
+
+    // this function is only for skills
+    // WHY? when we treat skill like other fields and highlight the words, only the highlighted word gets displayed and the other skills are neglected. Hence this special function which includes the hihglighted skill and also the other skills.
+    const renderHighlightedArray = (profile, fieldPath) => {
+        const fullArray = profile[fieldPath];
+        if (!Array.isArray(fullArray)) return "";
+
+        const highlight = profile.highlights?.find(h => h.path === fieldPath);
+
+        // get the matched skills
+        const matchedWords = new Set();
+        if (highlight) {
+            highlight.texts.forEach(text => {
+                if (text.type === "hit") {
+                    matchedWords.add(text.value.trim().toLowerCase());
+                }
+            });
+        }
+
+        // match it with other skills. 
+        return fullArray.map((item, i) => {
+            const isMatch = matchedWords.has(item.trim().toLowerCase());
+            return (
+                <span key={i}>
+                    {isMatch ? <mark>{item}</mark> : item}
+                    {i !== fullArray.length - 1 ? ", " : ""}
+                </span>
+            );
+        });
+    };
+
 
 
     useEffect(() => {
@@ -141,7 +173,7 @@ const Search = () => {
                                         {renderHighlightedText(profile, "last_name")}
                                     </td>
                                     <td>{renderHighlightedText(profile, "job")}</td>
-                                    <td>{renderHighlightedText(profile, "skills")}</td>
+                                    <td>{renderHighlightedArray(profile, "skills")}</td>
                                     <td>{renderHighlightedText(profile, "location")}</td>
                                     <td>{profile.email_id}</td>
                                 </tr>
