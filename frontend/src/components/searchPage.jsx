@@ -17,6 +17,7 @@ const Search = () => {
         try {
             const res = await axios.get(`http://localhost:5000/api/search?q=${query}&page=${newPage}&limit=${limit}`);
             const { data, totalPages } = res.data;
+            console.log(res.data)
             setProfiles(data);
             setPage(newPage);
             setTotalPages(totalPages);
@@ -78,6 +79,7 @@ const Search = () => {
                                 <th>Job</th>
                                 <th>Skills</th>
                                 <th>Location</th>
+                                <th>Email</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -87,6 +89,7 @@ const Search = () => {
                                     <td>{profile.job}</td>
                                     <td>{profile.skills?.join(", ")}</td>
                                     <td>{profile.location}</td>
+                                    <td>{profile.email_id}</td>
                                 </tr>
                             ))}
                         </tbody>

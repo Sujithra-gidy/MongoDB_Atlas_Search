@@ -1,14 +1,12 @@
-    const Profiles = require("../models/profiles-model");
+const Profiles = require("../models/profiles-model");
 
-   const search_profiles = async (req, res) => {
+
+// Search feature Main aggregation controller
+const search_profiles = async (req, res) => {
     try {
         const query = req.query.q;
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 20;
-
-        if (!query) {
-            return res.status(400).json({ message: "Search query is required." });
-        }
 
         const skip = (page - 1) * limit;
 
@@ -18,24 +16,22 @@
                     index: "default",
                     compound: {
                         should: [
+
+                            //----------------- HIGH PRIORITY -----------------//
                             { phrase: { query, path: "skills", slop: 1, score: { boost: { value: 10 } }, synonyms: "profileSynonyms" } },
                             { phrase: { query, path: "job", score: { boost: { value: 9.5 } }, synonyms: "profileSynonyms" } },
                             { phrase: { query, path: "location", score: { boost: { value: 9 } }, synonyms: "profileSynonyms" } },
-                            { phrase: { query, path: "education.course", score: { boost: { value: 8 } }, synonyms: "profileSynonyms" } },
                             { phrase: { query, path: "experience.role", score: { boost: { value: 8 } }, synonyms: "profileSynonyms" } },
-                            { phrase: { query, path: "user_certificates.certificate_name", score: { boost: { value: 7 } }, synonyms: "profileSynonyms" } },
                             { phrase: { query, path: "education.degree", score: { boost: { value: 7 } }, synonyms: "profileSynonyms" } },
 
+                            //----------------- MEDIUM PRIORITY -----------------//
                             { text: { query, path: ["skills", "job", "location"], fuzzy: { maxEdits: 1 }, score: { boost: { value: 6 } } } },
-                            { text: { query, path: ["experience.role", "education.course", "education.degree"], fuzzy: { maxEdits: 1 }, score: { boost: { value: 3 } } } },
-                            { text: { query, path: "user_certificates.certificate_name", fuzzy: { maxEdits: 1 }, score: { boost: { value: 2 } } } },
+                            { text: { query, path: "experience.role", fuzzy: { maxEdits: 1 }, score: { boost: { value: 3 } } } },
 
-                            { autocomplete: { query, path: "college_name", fuzzy: { maxEdits: 1 } } },
+                            //----------------- LOW PRIORITY -----------------//
                             { autocomplete: { query, path: "company_name", fuzzy: { maxEdits: 1 } } },
-                            { autocomplete: { query, path: "email_id", fuzzy: { maxEdits: 1 } } },
                             { autocomplete: { query, path: "first_name", fuzzy: { maxEdits: 1 } } },
                             { autocomplete: { query, path: "last_name", fuzzy: { maxEdits: 1 } } },
-                            { autocomplete: { query, path: "user_certificates.certification_provider", fuzzy: { maxEdits: 1 } } }
                         ],
                         minimumShouldMatch: 1
                     },
@@ -66,12 +62,7 @@
                                 email_id: 1,
                                 job: 1,
                                 skills: 1,
-                                created_time: 1,
-                                updated_time: 1,
-                                user_certificates: 1,
                                 location: 1,
-                                bio: 1,
-                                education: 1,
                                 experience: 1,
                                 score: 1
                             }
@@ -104,8 +95,8 @@
     }
 }
 
-
-    const get_all_profiles = async (req, res) => {
+// To retreive all the profiles. 
+const get_all_profiles = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 20;
@@ -136,4 +127,4 @@
 
 
 
-    module.exports = { search_profiles, get_all_profiles }
+module.exports = { search_profiles, get_all_profiles }
