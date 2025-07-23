@@ -3,6 +3,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import axios from 'axios';
 import '../App.css';
 
+// Search feature
 const Search = () => {
     const [query, setQuery] = useState("");
     const [profiles, setProfiles] = useState([]);
@@ -11,6 +12,7 @@ const Search = () => {
     const [totalPages, setTotalPages] = useState(1);
     const limit = 20;
 
+    // function to perform the search operation 
     const handleSearch = async (newPage = 1) => {
         if (!query.trim()) return;
         setLoading(true);
@@ -27,6 +29,7 @@ const Search = () => {
         setLoading(false);
     };
 
+    // function to retrieve all the data
     const handleProfile = async (newPage = 1) => {
         setLoading(true);
         try {
@@ -41,10 +44,18 @@ const Search = () => {
         setLoading(false);
     };
 
+    // function to clear the search
+    const handleClear = (e) => {
+        setQuery("");
+        handleProfile(1);
+    }
+
+    // function for next button 
     const handleNext = () => {
         if (page < totalPages) handleSearch(page + 1);
     };
 
+    // function fro back button 
     const handleBack = () => {
         if (page > 1) handleSearch(page - 1);
     };
@@ -55,16 +66,23 @@ const Search = () => {
 
     return (
         <div className="main-div">
+
             <div className="search">
+
                 <input
                     type="text"
                     placeholder="Search..."
                     className="search-input"
+                    value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleSearch(1)}
                 />
+
                 <button className="search-button" onClick={() => handleSearch(1)}>Search</button>
+                <button className="search-button" onClick={(e) => handleClear(e)}>Clear</button>
+
             </div>
+
 
             {loading ? (
                 <div className="loading">
@@ -98,6 +116,7 @@ const Search = () => {
             )}
 
             <div className="pagination">
+
                 <button onClick={handleBack} disabled={page === 1}>
                     Back
                 </button>
@@ -105,7 +124,9 @@ const Search = () => {
                 <button onClick={handleNext} disabled={page === totalPages}>
                     Next
                 </button>
+
             </div>
+
         </div>
     );
 };
