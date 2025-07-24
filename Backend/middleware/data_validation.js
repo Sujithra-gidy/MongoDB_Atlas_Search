@@ -26,7 +26,7 @@ const validateQuery = async (req, res, next) => {
 
     // allowing only alphabets and numeric characters. 
     const invalidData = /[$&<>{};'"\\]/;
-    const validData = /^[a-zA-Z0-9\s]+$/;
+    const validData = /^[a-zA-Z0-9\s\+\#\.]+$/;
 
     if (query && (invalidData.test(query) || !validData.test(query))) {
         console.log(query)

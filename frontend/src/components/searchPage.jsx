@@ -17,7 +17,7 @@ const Search = () => {
     const handleSearch = async (newPage = 1) => {
         if (!query.trim()) return;
         const invalidData = /[$&<>{};'"\\]/;
-        const validData = /^[a-zA-Z0-9\s]+$/;
+        const validData = /^[a-zA-Z0-9\s\+\#\.]+$/;
 
         if (query && (invalidData.test(query) || !validData.test(query))) {
             console.log(query);
@@ -28,7 +28,7 @@ const Search = () => {
         try {
             const res = await axios.get(`http://localhost:5000/api/search?q=${query}&page=${newPage}&limit=${limit}`);
             const { data, totalPages } = res.data;
-            console.log(res.data)
+            console.log("Result ✅✅✅✅", res.data)
             setProfiles(data);
             setPage(newPage);
             setTotalPages(totalPages);
@@ -71,57 +71,44 @@ const Search = () => {
         if (page > 1) handleSearch(page - 1);
     };
 
-    // function for highlighting the words
-    const renderHighlightedText = (profile, fieldPath) => {
-        const highlight = profile.highlights?.find(h => h.path === fieldPath);
-        if (!highlight) {
-            // fallback to raw value
-            if (fieldPath === "job") return profile.job;
-            if (fieldPath === "first_name") return profile.first_name;
-            if (fieldPath === "last_name") return profile.last_name;
-            if (fieldPath === "location") return profile.location;
-            return "";
-        }
+    const getRegexFromQuery = (query) => {
+        if (!query.trim()) return null;
 
-        // if the word is to be highlighted then it will be sent inside a html mark tag. 
-        return highlight.texts.map((text, i) =>
-            text.type === "hit" ? (
-                <mark key={i}>{text.value}</mark>
-            ) : (
-                <span key={i}>{text.value}</span>
-            )
+        const words = query.trim().split(/\s+/);
+        const escaped = words.map(word =>
+            word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+        );
+        const pattern = `(?<!\\w)(${escaped.join("|")})(?!\\w)`;
+        return new RegExp(pattern, "gi");
+    };
+
+    const renderHighlightedText = (text, query) => {
+        if (!query || !text) return text;
+
+        const regex = getRegexFromQuery(query);
+        const parts = text.split(regex);
+
+        return parts.map((part, i) =>
+            regex.test(part) ? <mark key={i}>{part}</mark> : <span key={i}>{part}</span>
         );
     };
 
-    // this function is only for skills
-    // WHY? when we treat skill like other fields and highlight the words, only the highlighted word gets displayed and the other skills are neglected. Hence this special function which includes the hihglighted skill and also the other skills.
-    const renderHighlightedArray = (profile, fieldPath) => {
-        const fullArray = profile[fieldPath];
-        if (!Array.isArray(fullArray)) return "";
+    const renderHighlightedArray = (array, query) => {
+        if (!Array.isArray(array) || !query) return array.join(", ");
 
-        const highlight = profile.highlights?.find(h => h.path === fieldPath);
+        const regex = getRegexFromQuery(query);
 
-        // get the matched skills
-        const matchedWords = new Set();
-        if (highlight) {
-            highlight.texts.forEach(text => {
-                if (text.type === "hit") {
-                    matchedWords.add(text.value.trim().toLowerCase());
-                }
-            });
-        }
-
-        // match it with other skills. 
-        return fullArray.map((item, i) => {
-            const isMatch = matchedWords.has(item.trim().toLowerCase());
+        return array.map((item, i) => {
+            const isMatch = regex.test(item);
             return (
                 <span key={i}>
                     {isMatch ? <mark>{item}</mark> : item}
-                    {i !== fullArray.length - 1 ? ", " : ""}
+                    {i !== array.length - 1 ? ", " : ""}
                 </span>
             );
         });
     };
+
 
 
 
@@ -153,7 +140,7 @@ const Search = () => {
                 <div className="loading">
                     <CircularProgress />
                 </div>
-            ) : (
+            ) : profiles.length === 0 ? <p>Seems like we have no data related to your search, try changing the keywords</p> : (
                 <div className="results-container">
                     <table>
                         <thead>
@@ -169,12 +156,15 @@ const Search = () => {
                             {profiles.map((profile) => (
                                 <tr key={profile._id}>
                                     <td>
-                                        {renderHighlightedText(profile, "first_name")}{" "}
-                                        {renderHighlightedText(profile, "last_name")}
+                                        {renderHighlightedText(profile.first_name, query)}{" "}
+                                        {renderHighlightedText(profile.last_name, query)}
                                     </td>
-                                    <td>{renderHighlightedText(profile, "job")}</td>
-                                    <td>{renderHighlightedArray(profile, "skills")}</td>
-                                    <td>{renderHighlightedText(profile, "location")}</td>
+
+
+                                    <td>{renderHighlightedText(profile.job, query)}</td>
+                                    <td>{renderHighlightedArray(profile.skills, query)}</td>
+                                    <td>{renderHighlightedText(profile.location, query)}</td>
+
                                     <td>{profile.email_id}</td>
                                 </tr>
                             ))}
